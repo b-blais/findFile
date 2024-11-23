@@ -52,8 +52,10 @@ int searchForFile(string stringName, filesystem::path localPath) {
     int arraysize =  strlen(cStrFileName);
     bool match = 0;
     while (match == 0) {
+        int count = 0;
         for (const auto& entry : filesystem::recursive_directory_iterator(localPath)) {
             if (entry.is_regular_file()) {
+                count++;
                 filesystem::path entryPath = entry.path();
                 filesystem::path entryName = entryPath.filename();
                 const char* tempCStr = stringToCStr(entryName.string());
@@ -75,7 +77,8 @@ int searchForFile(string stringName, filesystem::path localPath) {
                     }                
                     if ((charMatch == 1) && ((cStrFileName[(strlen(cStrFileName) - 1)]) == (tempCStr[strlen(tempCStr) - 1]))) {
                             match = 1;
-                            cout << "\nFound the file at the following path:\n" << entry.path() << endl;
+                            cout << "Searched " << count << " files ... ";
+                            cout << "\nfound the file at the following path:\n" << entry.path() << endl;
                             return 0;
                         }
                     }
