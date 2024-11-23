@@ -13,7 +13,6 @@ It responds when it has found it with the full path.
 using namespace std;
 
 //funct prototypes
-const char* stringToCStr(string localStringName);
 string getFileName();
 int searchForFile(string, filesystem::path);
 
@@ -42,23 +41,17 @@ string getFileName() {
     return localName;
 }
 
-const char* stringToCStr(string localStringName) {
-    const char* cString = localStringName.c_str();
-    return cString;
-}
-
 int searchForFile(string stringName, filesystem::path localPath) {
-    const char* cStrFileName = stringToCStr(stringName);
-    int arraysize =  strlen(cStrFileName);
-    bool match = 0;
-    while (match == 0) {
-        int count = 0;
-        for (const auto& entry : filesystem::recursive_directory_iterator(localPath)) {
+    const char* cStrFileName = stringName.c_str();
+    auto arraysize =  strlen(cStrFileName);
+    int count = 0;
+    for (const auto& entry : filesystem::recursive_directory_iterator(localPath)) {
             if (entry.is_regular_file()) {
                 count++;
                 filesystem::path entryPath = entry.path();
                 filesystem::path entryName = entryPath.filename();
-                const char* tempCStr = stringToCStr(entryName.string());
+                auto tempEntryName = entryName.string();
+                const char* tempCStr = tempEntryName.c_str();
                 if (strlen(cStrFileName) == strlen(tempCStr)) {
                     bool charMatch = 0;
                     int j = 0;
@@ -76,14 +69,14 @@ int searchForFile(string stringName, filesystem::path localPath) {
                         }
                     }                
                     if ((charMatch == 1) && ((cStrFileName[(strlen(cStrFileName) - 1)]) == (tempCStr[strlen(tempCStr) - 1]))) {
-                            match = 1;
                             cout << "Searched " << count << " files ... ";
-                            cout << "\nfound the file at the following path:\n" << entry.path() << endl;
+                            cout << "\nfound the file at the following path:\n" << entry.path().string() << endl;
                             return 0;
                         }
                     }
                 }
             }
             
-        }
+    cout << "Searched " << count << " files ... file not found.";
+    return 0;
 }
